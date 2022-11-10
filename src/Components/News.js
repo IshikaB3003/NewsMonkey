@@ -55,17 +55,50 @@ export default class News extends Component {
         this.state={
             // articles:this.articles,
             articles:[],
-            loading:false
+            loading:false,
+            page:1,
+
         }
     }
 
     async componentDidMount(){
       console.log("cdm");
-      let url="https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=0046f61e768945c49b19651c3784cf82"
+      let url="https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=0046f61e768945c49b19651c3784cf82&page=1&pageSize=20"
       let data=await fetch(url);
       let parsedData=await data.json();
       console.log(parsedData);
-      this.setState({articles: parsedData.articles})
+      this.setState({articles: parsedData.articles,totalArticles: parsedData.totalResults})
+    }
+
+     handlePreviousClick=async()=>{
+        console.log("prev")
+
+        let url=`https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=0046f61e768945c49b19651c3784cf82&page=${this.state.page - 1}&pageSize=20`;
+        let data=await fetch(url);
+        let parsedData=await data.json();
+        console.log(parsedData);
+        this.setState({
+          page: this.state.page-1,
+          articles: parsedData.articles
+        })
+    }
+
+    
+
+     handleNextClick=async()=>{
+        console.log("next");
+        if(this.state.page+1 > Math.ceil(this.state.totalResults/20)){
+
+        }
+        else{let url=`https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=0046f61e768945c49b19651c3784cf82&page=${this.state.page + 1}&pageSize=20`;
+        let data=await fetch(url);
+        let parsedData=await data.json();
+        console.log(parsedData);
+        this.setState({
+          page: this.state.page+1,
+          articles: parsedData.articles
+        })
+      }  
     }
 
   render() {
@@ -78,11 +111,11 @@ export default class News extends Component {
           <NewsItem title={element.title?element.title.slice(0,40):""} description={element.description?element.description.slice(0,88):""} imageUrl={element.urlToImage} newsUrl={element.url}/>
           </div>
         })}
-
-            
-            
-            
-            </div>
+        </div>
+        <div className="container d-flex justify-content-between">
+          <button disables={this.state.page<=1} type="button" className="btn btn-light" onClick={this.handlePreviousClick}>&#8592;Previous</button>
+          <button type="button" className="btn btn-dark" onClick={this.handleNextClick}>Next &#8594;</button>
+        </div>
       </div>
     )
   }
