@@ -2,6 +2,7 @@ import { element } from 'prop-types';
 import React, { Component } from 'react'
 import NewsItem from './NewsItem'
 import Spinner from './Spinner';
+import PropTypes from 'prop-types'
 
 export default class News extends Component {
 
@@ -50,6 +51,20 @@ export default class News extends Component {
 //         "content": "The day's top stories, from sports to movies to politics to world events."
 //       }
 //     ]
+
+
+    static defaultProps={
+      country:'us',
+      pageSize:8,
+      category: 'general',
+    }
+    
+    static propTypes={
+      country: PropTypes.string,
+      pageSize: PropTypes.number,
+      category: PropTypes.string,
+    }
+  
   
     constructor(){
         super();
@@ -64,7 +79,7 @@ export default class News extends Component {
 
     async componentDidMount(){
       console.log("cdm");
-      let url=`https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=0046f61e768945c49b19651c3784cf82&page=1&pageSize=${this.props.pageSize}`
+      let url=`https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=0046f61e768945c49b19651c3784cf82&page=1&pageSize=${this.props.pageSize}`
       this.setState({loading:true});
       let data=await fetch(url);
       let parsedData=await data.json();
@@ -78,7 +93,7 @@ export default class News extends Component {
      handlePreviousClick=async()=>{
         console.log("prev")
 
-        let url=`https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=0046f61e768945c49b19651c3784cf82&page=${this.state.page - 1}&pageSize=${this.props.pageSize}`;
+        let url=`https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=0046f61e768945c49b19651c3784cf82&page=${this.state.page - 1}&pageSize=${this.props.pageSize}`;
         this.setState({loading:true});
         let data=await fetch(url);
         let parsedData=await data.json();
@@ -97,7 +112,7 @@ export default class News extends Component {
         if(this.state.page+1 > Math.ceil(this.state.totalResults/this.props.pageSize)){
         }
         else{
-        let url=`https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=0046f61e768945c49b19651c3784cf82&page=${this.state.page + 1}&pageSize=${this.props.pageSize}`;
+        let url=`https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=0046f61e768945c49b19651c3784cf82&page=${this.state.page + 1}&pageSize=${this.props.pageSize}`;
         this.setState({loading:true});
         let data=await fetch(url);
         let parsedData=await data.json();
